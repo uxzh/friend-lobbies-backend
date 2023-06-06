@@ -1,24 +1,19 @@
 const express = require("express");
+const userController = require("../controllers/userController");
 const route = express.Router();
 
-route.get('/single/:id', (req, res, next) => {
-    // return the information for a single user
-})
+route.get('/single', userController.getSingle)
 
-route.put('/:id', (req, res, next) => {
-    // update the details for a user
-})
+route.put('/:id', userController.update)
 
-route.get('/username/:username', (req, res, next) => {
-    // get user by username
-})
+route.get('/username/:username', userController.getByUsername)
 
-route.get('/all', (req, res, next) => {
-    // get all users, admin restricted
-})
+route.get('/all', userController.getAll)
 
-route.put('/ban/:id', (req, res, next) => {
-    //ban a user (with duration of ban)
-})
+route.put('/ban/:id', userController.ban)
+
+route.put('/mute/:id/:lobby', userController.mute)
+
+route.put('/save/:id', userController.saveLobby)
 
 module.exports = route;
