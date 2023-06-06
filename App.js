@@ -1,7 +1,6 @@
 const express = require('express');
 const app = express()
 const cors = require('cors')
-const PORT = 4000
 const signUpRoute = require('./Routes/signup.route')
 const loginRoute = require('./Routes/login.route')
 const userRoute = require('./Routes/users.route')
@@ -23,7 +22,3 @@ app.use('/signup', signUpRoute)
 app.use('/users', userRoute)
 app.use('/lobbies', lobbyRoute)
 
-
-app.listen(PORT, () => {
-    console.log(`App listening on port ${PORT}`)
-})
