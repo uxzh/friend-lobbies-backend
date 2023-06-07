@@ -1,40 +1,23 @@
 const express = require("express");
+const lobbyController = require("../controllers/lobbyController");
 const route = express.Router();
 
-route.get('/lobby/:id', (req, res, next) => {
-    // get lobby by id
-})
+route.get('/lobby/:id', lobbyController.getById)
 
-route.get('/categories', (req, res, next) => {
-    // get all possible categories
-})
+route.get('/categories', lobbyController.getCategories)
 
-route.post('/', (req, res, next) => {
-    //add a lobby
-})
+route.post('/', lobbyController.addLobby)
 
-route.put('/:id', (req, res, next) => {
-    // edit a lobby
-})
+route.put('/:id', lobbyController.edit)
 
-route.delete('/:id', (req, res, next) => {
-    //delete a lobby
-})
+route.delete('/:id', lobbyController.delete)
 
-route.put('/join/:id', (req, res, next) => {
-    // join a lobby
-})
+route.put('/join/:id', lobbyController.join)
 
-route.put('/leave/:id', (req, res, next) => {
-    // leave a lobby
-})
+route.put('/leave/:id', lobbyController.leave)
 
-route.post('/messsage/:id', (req, res, next) => {
-    //post a message in a lobby
-})
+route.post('/messsage/:id', lobbyController.sendMessage)
 
-route.get('/message/:id', (req, res, next) => {
-    //get messages from a lobby
-})
+route.get('/message/:id', lobbyController.getMessages)
 
 module.exports = route;

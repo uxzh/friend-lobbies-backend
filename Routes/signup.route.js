@@ -1,9 +1,8 @@
 const express = require("express");
+const sigupController = require("../controllers/signupController");
 const route = express.Router();
 
-route.post('/', (req, res, next) => {
-    //sign up the user and log them in with a token.
-})
+route.post('/', sigupController.signup)
 
 
 module.exports = route;
