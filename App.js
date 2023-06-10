@@ -18,6 +18,13 @@ app.use(cors(corsOptions))
 app.use(express.json())
 app.use(cookieParser())
 
+app.use((req, res, next) => {
+    res.ok = (data) => {
+        res.status(200).send(data)
+    }
+    next()
+})
+
 app.use('/login', loginRoute)
 app.use('/signup', signUpRoute)
 app.use('/users', userRoute)
