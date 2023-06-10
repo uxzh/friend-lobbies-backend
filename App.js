@@ -5,6 +5,7 @@ const signUpRoute = require('./Routes/signup.route')
 const loginRoute = require('./Routes/login.route')
 const userRoute = require('./Routes/users.route')
 const lobbyRoute = require('./Routes/lobbies.route')
+const cookieParser = require('cookie-parser')
 
 
 const corsOptions ={
@@ -22,3 +23,4 @@ app.use('/signup', signUpRoute)
 app.use('/users', userRoute)
 app.use('/lobbies', lobbyRoute)
 
+module.exports = app
