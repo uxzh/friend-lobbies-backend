@@ -3,7 +3,7 @@ class LobbiesDAO{
 
     static async injectDB(db){
         try{
-            lobbies = await db.collection("lobbies")
+            this.lobbies = await db.collection("lobbies")
         }catch(err){
             throw(err)
         }
@@ -11,3 +11,5 @@ class LobbiesDAO{
 
     // DB functions added here
 }
+
+module.exports = LobbiesDAO
