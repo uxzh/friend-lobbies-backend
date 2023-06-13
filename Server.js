@@ -1,5 +1,8 @@
 const {MongoClient} = require('mongodb')
-require("dotenv").config({path: `.env.${process.env.ENV_PATH}`});
+require('dotenv').config({path: `.env.${process.env.ENV_PATH}`})
+const app = require('./App')
+const LobbiesDAO = require('./DAO/lobbies.dao')
+const UsersDAO = require('./DAO/users.dao')
 
 const client = new MongoClient(process.env.MONGO_URL)
 
