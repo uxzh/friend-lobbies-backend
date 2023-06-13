@@ -1,12 +1,15 @@
 const express = require("express");
 const lobbyController = require("../controllers/lobbyController");
+const { lobbySchema } = require("../validation/schemas/lobby.schema");
 const route = express.Router();
+const { validateSchema }  = require("../validation/validateSchema");
+const { multerUpload } = require("../lib/multerUpload");
 
 route.get('/lobby/:id', lobbyController.getById)
 
 route.get('/categories', lobbyController.getCategories)
 
-route.post('/', lobbyController.addLobby)
+route.post('/', validateSchema(lobbySchema), multerUpload.array('pictures', 5), lobbyController.addLobby)
 
 route.put('/:id', lobbyController.edit)
 
