@@ -1,7 +1,10 @@
+const UsersDAO = require('../DAO/users.dao')
 class userController{
     static async getSingle(req, res, next){
         try{
-            // get one user
+            //get user by what? im going to assume its ID, but also how do we get ID?
+            const user = await UsersDAO.getById(req.body.id);
+            return res.status(200).send(user);
         }catch(err){
             res.status(500).send(err)
         }
@@ -18,6 +21,8 @@ class userController{
     static async getByUsername(req, res, next){
         try{
             // get user by username
+            const user = UsersDAO.getByUsername(req.body.userName);
+            res.status(200).send(user);
         }catch(err){
             res.status(500).send(err)
         }
