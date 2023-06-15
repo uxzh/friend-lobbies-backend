@@ -20,7 +20,7 @@ class signupController{
             const {firstName, lastName, email, username, phone, interests} = req.body
             const _id = uuidv4()
 
-            UsersDAO.addUser({firstName, lastName, email, username, phone, interests, _id, password:hashedpassword, picture})
+            UsersDAO.addUser({firstName, lastName, email, username, phone, interests, _id, password:hashedpassword, picture, mutes:[], savedLobbies:[]})
             res.status(201).send("User created")
         }catch(err){
             res.status(500).send(err)
