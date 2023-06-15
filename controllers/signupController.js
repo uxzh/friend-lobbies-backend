@@ -21,6 +21,8 @@ class signupController{
             const _id = uuidv4()
 
             UsersDAO.addUser({firstName, lastName, email, username, phone, interests, _id, password:hashedpassword, picture})
+            const token = await jwt.sign({_id, firstName, lastName, picture, interests}, process.env.JWT_SECRET, {expiresIn: "3h"})
+            res.cookie("token", token, {sameSite: 'none', secure: true})
             res.status(201).send("User created")
         }catch(err){
             res.status(500).send(err)

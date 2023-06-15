@@ -15,9 +15,10 @@ const corsOptions ={
     optionSuccessStatus:200
 }
 
+app.use(cookieParser())
 app.use(cors(corsOptions))
 app.use(express.json())
-app.use(cookieParser())
+
 
 app.use((req, res, next) => {
     res.ok = (data) => {

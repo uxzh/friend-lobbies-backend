@@ -5,23 +5,23 @@ const { v4: uuidv4 } = require('uuid');
 class lobbyController{
     static async getById(req, res, next){
         try{
-            const lobby = LobbiesDAO.getById(Number(req.params.id))
+            const lobby = LobbiesDAO.getById(req.params.id)
             if(lobby){
-                res.ok(lobby)
+                return res.ok(lobby)
             }else{
-                res.status(404).send("Lobby not found")
+                return res.status(404).send("Lobby not found")
             }
         }catch(err){
-            res.status(500).send(err)
+            return res.status(500).send(err)
         }
     }
 
     static async getCategories(req, res, next){
         try{
             const categories = LobbiesDAO.getCategories()
-            res.ok(categories)
+            return res.ok(categories)
         }catch(err){
-            res.status(500).send(err)
+            return res.status(500).send(err)
         }
     }
 
@@ -40,17 +40,17 @@ class lobbyController{
                     pictures.push(url)
                 })
             }
-            const add = await LobbiesDAO.addLobby({category, activity, location, date, capacity, users, pictures, defaultPicture, _id, messages:[]})
-            res.ok("Lobby created")
+            const add = await LobbiesDAO.addLobby({category, activity, location, date, capacity, users, pictures, defaultPicture, _id, messages:[], admins: [req.userID]})
+            return res.ok("Lobby created")
         }catch(err){
-            res.status(500).send(err)
+            return res.status(500).send(err)
         }
     }
 
     static async editLobby(req, res, next){
         try{
             const {category, activity, location, date, capacity, _id, pictures} = req.body
-            const lobby = await LobbiesDAO.getById(Number(_id))
+            const lobby = await LobbiesDAO.getById(_id)
             if(!lobby){
                 return res.status(404).send("Lobby not found")
             }
@@ -67,54 +67,105 @@ class lobbyController{
                 })
             }
             const edit = await LobbiesDAO.editLobby(lobby._id, {category, activity, location, date, capacity, pictures})
-            res.ok("Lobby edited")
+            return res.ok("Lobby edited")
         }catch(err){
-            res.status(500).send(err)
+            return res.status(500).send(err)
         }
     }
 
     static async delete(req, res, next){
         try{
-            const del = await LobbiesDAO.deleteLobby(Number(req.params.id))
-            res.ok("Lobby deleted")
+            const del = await LobbiesDAO.deleteLobby(req.params.id)
+            return res.ok("Lobby deleted")
         }catch(err){
-            res.status(500).send(err)
+            return res.status(500).send(err)
         }
     }
 
     static async join(req, res, next){
         try{
-            const join = await LobbiesDAO.joinLobby(Number(req.params.id), req.userID)
-            res.ok("Joined lobby")
+            const join = await LobbiesDAO.joinLobby(req.params.id, req.userID)
+            return res.ok("Joined lobby")
         }catch(err){
-            res.status(500).send(err)
+            return res.status(500).send(err)
         }
     }
 
     static async leave(req, res, next){
         try{
-            const leave = await LobbiesDAO.leaveLobby(Number(req.params.id), req.userID)
-            res.ok("Left lobby")
+            const leave = await LobbiesDAO.leaveLobby(req.params.id, req.userID)
+            return res.ok("Left lobby")
         }catch(err){
-            res.status(500).send(err)
+            return res.status(500).send(err)
         }
     }
 
     static async sendMessage(req, res, next){
         try{
-            const message = await LobbiesDAO.sendMessage(Number(req.params.id), req.userID, req.body.message)
-            res.ok("Message sent")
+            const message = await LobbiesDAO.sendMessage(req.params.id, req.userID, req.body.message)
+            return res.ok("Message sent")
         }catch(err){
-            res.status(500).send(err)
+            return res.status(500).send(err)
         }
     }
 
     static async getMessages(req, res, next){
         try{
-            const messages = await LobbiesDAO.getMessages(Number(req.params.id), req.userID)
-            res.ok(messages)
+            const messages = await LobbiesDAO.getMessages(req.params.id, req.userID)
+            return res.ok(messages)
         }catch(err){
-            res.status(500).send(err)
+            return res.status(500).send(err)
+        }
+    }
+
+    static async addAdmin(req, res, next){
+        try{ 
+            const lobby = await LobbiesDAO.getById(req.params.lobby)
+            const admins = lobby.admins
+            if (!(req.userID in admins || req.isAdmin)){
+                return res.status(401).send("Unauthorized")
+            }
+            admins.push(req.params.id)
+            const add = await LobbiesDAO.editLobby(lobby._id, {admins})
+            return res.ok("Added admin")
+        }catch(err){
+            return res.status(500).send(err)
+        }
+    }
+
+    static async removeAdmin(req, res, next){
+        try{ 
+            const lobby = await LobbiesDAO.getById(req.params.lobby)
+            const admins = lobby.admins
+            if (!(req.userID in admins || req.isAdmin)){
+                return res.status(401).send("Unauthorized")
+            }
+            const newAdmins = admins.filter((admin) => admin != req.params.id)
+            if(newAdmins.length === 0){
+                return res.status(400).send("Cannot remove last admin")
+            }
+            const add = await LobbiesDAO.editLobby(lobby._id, {admins: newAdmins})
+            return res.ok("Added admin")
+        }catch(err){
+            return res.status(500).send(err)
+        }
+    }
+
+    static async kick(req, res, next){
+        try{ 
+            const lobby = await LobbiesDAO.getById(req.params.lobby)
+            const users = lobby.users
+            if (!(req.userID in admins || req.isAdmin)){
+                return res.status(401).send("Unauthorized")
+            }
+            const newUsers = users.filter((user) => user != req.params.id)
+            if(newUsers.length === 0){
+                return res.status(400).send("Cannot remove last user")
+            }
+            const add = await LobbiesDAO.editLobby(lobby._id, {users: newUsers})
+            return res.ok("User kicked")
+        }catch(err){
+            return res.status(500).send(err)
         }
     }
 

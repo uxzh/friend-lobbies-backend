@@ -6,7 +6,8 @@ const lobbySchema = object({
     activity: string().required(),
     location: string().required(),
     date: date().required(),
-    capacity: string().required()
+    capacity: string().required(),
+    name: string().required()
 })
 
 module.exports = {lobbySchema}
