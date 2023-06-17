@@ -13,10 +13,10 @@ class LobbiesDAO{
 
     static async getById(id){
         try{
-            const user = await this.lobbies.findOne({_id: id})
-            return user
+            const lobby = await this.lobbies.findOne({_id: id})
+            return lobby
         }catch(err){
-            throw new Error(`Couldn't find user: ${err}`)
+            throw new Error(`Couldn't find lobby: ${err}`)
         }
     }
 
@@ -31,7 +31,7 @@ class LobbiesDAO{
 
     static async addLobby(lobby){
         try{
-           this.lobbies.insertOne(lobby)
+           await this.lobbies.insertOne(lobby)
         }catch(err){
             throw new Error(`Couldn't add lobby: ${err}`)
         }
@@ -39,7 +39,7 @@ class LobbiesDAO{
 
     static async editLobby(id, lobby){
         try{
-            lobbies.updateOne({_id: id}, {$set: lobby})
+            await this.lobbies.updateOne({_id: id}, {$set: lobby})
         }catch(err){
             throw new Error(`Couldn't edit lobby: ${err}`)
         }
@@ -47,7 +47,7 @@ class LobbiesDAO{
 
     static async deleteLobby(id){
         try{
-            this.lobbies.deleteOne({_id: id})
+            await this.lobbies.deleteOne({_id: id})
         }catch(err){
             throw new Error(`Couldn't delete lobby: ${err}`)
         }
@@ -57,7 +57,7 @@ class LobbiesDAO{
         try{
             const lobby = await this.getById(LobbyID)
             const {users} = lobby
-            this.lobbies.updateOne({_id: LobbyID}, {$set: {users: [...users, userID]}})
+            await this.lobbies.updateOne({_id: LobbyID}, {$set: {users: [...users, userID]}})
         }catch(err){
             throw new Error(`Couldn't join lobby: ${err}`)
         }
@@ -68,7 +68,7 @@ class LobbiesDAO{
             const lobby = await this.getById(LobbyID)
             const {users} = lobby
             const newUsers = users.filter(user => user !== userID)
-            this.lobbies.updateOne({_id: LobbyID}, {$set: {users: newUsers}})
+            await this.lobbies.updateOne({_id: LobbyID}, {$set: {users: newUsers}})
         }catch(err){
             throw new Error(`Couldn't leave lobby: ${err}`)
         }
@@ -79,7 +79,7 @@ class LobbiesDAO{
             const lobby = await this.getById(LobbyID)
             const {messages} = lobby
             const time = Date().now()
-            this.lobbies.updateOne({_id: LobbyID}, {$set: {messages: [...messages, {userID, message, time}]}})
+            await this.lobbies.updateOne({_id: LobbyID}, {$set: {messages: [...messages, {userID, message, time}]}})
         }catch(err){
             throw new Error(`Couldn't send message: ${err}`)
         }
