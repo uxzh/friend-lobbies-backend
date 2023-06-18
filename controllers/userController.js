@@ -1,4 +1,5 @@
 const UsersDAO = require('../DAO/users.dao')
+const LobbiesDAO = require('../DAO/lobbies.dao')
 const { v4: uuidv4 } = require('uuid');
 
 class userController{
@@ -119,6 +120,33 @@ class userController{
             const newInvites = invites.filter((invite) => invite._id != req.params.id);
             await UsersDAO.update(req.userID, {invites: newInvites});
             return res.ok("Removed invite")
+        }catch(err){
+            res.status(500).send(err)
+        }
+    }
+
+    static async acceptInvite(req, res, next){
+        try{
+            const user = await UsersDAO.getById(req.userID);
+            const invites = user.invites;
+            const invite = invites.find((invite) => invite._id == req.params.id);
+            if (invite.type === "lobby"){
+                await LobbiesDAO.joinLobby(invite.reference, req.userID);
+                res.ok("Joined lobby")
+            }
+            if(invite.type === "friend"){
+                const friend = await UsersDAO.getById(invite.reference);
+                const userFriends = user.friends;
+                const friendFriends = friend.friends;
+                const newUserFriends = userFriends.push(invite.reference);
+                const newFriendFriends = friendFriends.push(req.userID);
+                await UsersDAO.update(req.userID, {friends: newUserFriends});
+                await UsersDAO.update(invite.reference, {friends: newFriendFriends});
+                return res.ok("Added friend")
+            }
+            else{
+                return res.status(400).send("Invalid invite type")
+            }
         }catch(err){
             res.status(500).send(err)
         }

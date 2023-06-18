@@ -27,7 +27,7 @@ class lobbyController{
 
     static async addLobby(req, res, next){
         try{
-            const {category, activity, location, date, capacity} = req.body
+            const {category, activity, location, date, capacity, name} = req.body
             const users = [req.userID]
             const img = await unsplash.photos.getRandom({query: activity})
             const defaultPicture = img.response.urls.regular
