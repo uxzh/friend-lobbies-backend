@@ -6,6 +6,7 @@ const loginRoute = require('./Routes/login.route')
 const userRoute = require('./Routes/users.route')
 const lobbyRoute = require('./Routes/lobbies.route')
 const cookieParser = require('cookie-parser')
+const userCheck = require('./lib/userCheck')
 
 
 const corsOptions ={
@@ -14,9 +15,10 @@ const corsOptions ={
     optionSuccessStatus:200
 }
 
+app.use(cookieParser())
 app.use(cors(corsOptions))
 app.use(express.json())
-app.use(cookieParser())
+
 
 app.use((req, res, next) => {
     res.ok = (data) => {
@@ -24,6 +26,8 @@ app.use((req, res, next) => {
     }
     next()
 })
+
+app.use(userCheck)
 
 app.use('/login', loginRoute)
 app.use('/signup', signUpRoute)
