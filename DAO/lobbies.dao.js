@@ -20,15 +20,6 @@ class LobbiesDAO{
         }
     }
 
-    static async getCategories(){
-        try{
-            const categories = await this.lobbies.distinct("category")
-            return categories
-        }catch(err){
-            throw new Error(`Couldn't get categories: ${err}`)
-        }
-    }
-
     static async addLobby(lobby){
         try{
            await this.lobbies.insertOne(lobby)

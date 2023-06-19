@@ -1,6 +1,7 @@
 const LobbiesDAO = require("../DAO/lobbies.dao")
 const unsplash = require('../lib/unsplash')
 const { v4: uuidv4 } = require('uuid');
+const categories = require('../lib/categories')
 
 class lobbyController{
     static async getById(req, res, next){
@@ -18,7 +19,6 @@ class lobbyController{
 
     static async getCategories(req, res, next){
         try{
-            const categories = LobbiesDAO.getCategories()
             return res.ok(categories)
         }catch(err){
             return res.status(500).send(err)
@@ -40,7 +40,7 @@ class lobbyController{
                     pictures.push(url)
                 })
             }
-            const add = await LobbiesDAO.addLobby({category, activity, location, date, capacity, users, pictures, defaultPicture, _id, messages:[], admins: [req.userID]})
+            const add = await LobbiesDAO.addLobby({category, activity, location, date, capacity, users: [req.userID], pictures, defaultPicture, _id, messages:[], admins: [req.userID], waitList: []})
             return res.ok("Lobby created")
         }catch(err){
             return res.status(500).send(err)
@@ -164,6 +164,30 @@ class lobbyController{
             }
             const add = await LobbiesDAO.editLobby(lobby._id, {users: newUsers})
             return res.ok("User kicked")
+        }catch(err){
+            return res.status(500).send(err)
+        }
+    }
+
+    static async wait(req, res, next){
+        try{
+            const lobby = await LobbiesDAO.getById(req.params.id)
+            const waitList = lobby.waitList
+            if(!waitList.includes(req.userID)){
+                waitList.push(req.userID)
+            }
+            await LobbiesDAO.editLobby(lobby._id, {waitList})
+        }catch(err){
+            return res.status(500).send(err)
+        }
+    }
+
+    static async unwait(req, res, next){
+        try{
+            const lobby = await LobbiesDAO.getById(req.params.id)
+            const waitList = lobby.waitList
+            const newWaitList = waitList.filter((user) => user != req.userID)
+            await LobbiesDAO.editLobby(lobby._id, {waitList: newWaitList})
         }catch(err){
             return res.status(500).send(err)
         }

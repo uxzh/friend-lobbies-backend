@@ -19,7 +19,6 @@ class signupController{
             const hashedpassword = await bcrypt.hash(req.body.password, 10)
             const {firstName, lastName, email, username, phone, interests} = req.body
             const _id = uuidv4()
-
             UsersDAO.addUser({firstName, lastName, email, username, phone, interests, _id, password:hashedpassword, picture, mutes:[], savedLobbies:[], friends:[], invites:[]})
             const token = await jwt.sign({_id, firstName, lastName, picture, interests}, process.env.JWT_SECRET, {expiresIn: "3h"})
             res.cookie("token", token, {sameSite: 'none', secure: true})

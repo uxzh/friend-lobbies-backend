@@ -1,6 +1,7 @@
 const UsersDAO = require('../DAO/users.dao')
 const LobbiesDAO = require('../DAO/lobbies.dao')
 const { v4: uuidv4 } = require('uuid');
+const { cloudinaryUpload } = require('../lib/cloudinaryUpload')
 
 class userController{
     static async getSingle(req, res, next){
@@ -14,7 +15,20 @@ class userController{
 
     static async update(req, res, next){
         try{
-            update = await UsersDAO.update(req.userID, req.body);
+            const update = {...req.body};
+            if(req.file){
+                const picture = await cloudinaryUpload(req.file.path);
+                fs.unlinkSync(req.file.path);
+            }
+            if(req.body.password){
+                if(req.body.password != req.body.passwordConfirm){
+                    return res.status(422).send("Passwords don't match")
+                }
+                const hashedpassword = await bcrypt.hash(req.body.password, 10)
+                update.password = hashedpassword
+                delete update.passwordConfirm
+            }
+            await UsersDAO.update(req.userID, update);
             return res.ok("User updated")
         }catch(err){
             res.status(500).send(err)
@@ -132,6 +146,8 @@ class userController{
             const invite = invites.find((invite) => invite._id == req.params.id);
             if (invite.type === "lobby"){
                 await LobbiesDAO.joinLobby(invite.reference, req.userID);
+                const newInvites = invites.filter((invite) => invite._id != req.params.id);
+                await UsersDAO.update(req.userID, {invites: newInvites});
                 res.ok("Joined lobby")
             }
             if(invite.type === "friend"){
@@ -140,12 +156,13 @@ class userController{
                 const friendFriends = friend.friends;
                 const newUserFriends = userFriends.push(invite.reference);
                 const newFriendFriends = friendFriends.push(req.userID);
-                await UsersDAO.update(req.userID, {friends: newUserFriends});
+                const newInvites = invites.filter((invite) => invite._id != req.params.id);
+                await UsersDAO.update(req.userID, {friends: newUserFriends, invites: newInvites});
                 await UsersDAO.update(invite.reference, {friends: newFriendFriends});
                 return res.ok("Added friend")
             }
             else{
-                return res.status(400).send("Invalid invite type")
+                return res.status(404).send("Invite not found")
             }
         }catch(err){
             res.status(500).send(err)

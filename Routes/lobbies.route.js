@@ -30,4 +30,8 @@ route.put('/removeAdmin/:id/:lobby', lobbyController.removeAdmin)
 
 route.put('/kick/:id/:lobby', lobbyController.kick)
 
+route.put('/wait/:id', lobbyController.wait)
+
+route.put('/unwait/:id', lobbyController.unwait)
+
 module.exports = route;
