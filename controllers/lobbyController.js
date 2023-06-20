@@ -2,7 +2,6 @@ const LobbiesDAO = require("../DAO/lobbies.dao")
 const unsplash = require('../lib/unsplash')
 const { v4: uuidv4 } = require('uuid');
 const categories = require('../lib/categories');
-const { getUsers } = require("unsplash-js/dist/methods/search");
 
 class lobbyController{
 
