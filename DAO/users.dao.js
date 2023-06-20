@@ -44,6 +44,23 @@ class UsersDAO{
         }
     }
 
+    static async getAll(){
+        try{
+            const users = await this.users.find().toArray()
+            return users
+        }catch(err){
+            throw new Error(`Couldn't get users: ${err}`)
+        }
+    }
+
+    static async update(id, params){
+        try{
+            const update = await this.users.updateOne({id: user.id}, {$set: params})
+        }catch(err){
+            throw new Error(`Couldn't update user: ${err}`)
+        }
+    }
+
 }
 
 module.exports = UsersDAO
