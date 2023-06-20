@@ -3,6 +3,7 @@ const {cloudinaryUpload} = require('../lib/cloudinaryUpload')
 const bcrypt = require('bcrypt')
 const { v4: uuidv4 } = require('uuid');
 const UsersDAO = require('../DAO/users.dao')
+const jwt = require('jsonwebtoken')
 
 class signupController{
     static async signup(req, res, next){
@@ -25,7 +26,7 @@ class signupController{
             res.cookie("token", token, {sameSite: 'none', secure: true})
             res.status(201).send("User created")
         }catch(err){
-            res.status(500).send(err)
+            res.status(500).send(err.message)
         }
     }
 
