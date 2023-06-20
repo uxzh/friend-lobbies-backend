@@ -89,6 +89,15 @@ class LobbiesDAO{
         }
     }
 
+    static async search(query){
+        try{
+            const lobbies = await this.lobbies.find(query).toArray()
+            return lobbies
+        }catch(err){
+            throw new Error(`Couldn't search for lobbies: ${err}`)
+        }
+    }
+
 }
 
 module.exports = LobbiesDAO

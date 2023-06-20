@@ -34,4 +34,8 @@ route.put('/wait/:id', lobbyController.wait)
 
 route.put('/unwait/:id', lobbyController.unwait)
 
+route.get('/search/', lobbyController.search)
+
+route.get('users/:id', lobbyController.getUsers)
+
 module.exports = route;

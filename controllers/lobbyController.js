@@ -1,9 +1,11 @@
 const LobbiesDAO = require("../DAO/lobbies.dao")
 const unsplash = require('../lib/unsplash')
 const { v4: uuidv4 } = require('uuid');
-const categories = require('../lib/categories')
+const categories = require('../lib/categories');
+const { getUsers } = require("unsplash-js/dist/methods/search");
 
 class lobbyController{
+
     static async getById(req, res, next){
         try{
             const lobby = LobbiesDAO.getById(req.params.id)
@@ -24,6 +26,8 @@ class lobbyController{
             return res.status(500).send(err)
         }
     }
+
+    
 
     static async addLobby(req, res, next){
         try{
@@ -188,6 +192,30 @@ class lobbyController{
             const waitList = lobby.waitList
             const newWaitList = waitList.filter((user) => user != req.userID)
             await LobbiesDAO.editLobby(lobby._id, {waitList: newWaitList})
+        }catch(err){
+            return res.status(500).send(err)
+        }
+    }
+
+    static async search(req, res, next){
+        try{
+            const lobbies = await LobbiesDAO.search(category, activity, location, date, capacity)
+            return res.ok(lobbies)
+        }catch(err){
+            return res.status(500).send(err)
+        }
+    }
+
+    static async getUsers(req, res, next){
+        try{
+            const lobby = await LobbiesDAO.getById(req.params.id)
+            const users = lobby.users
+            const usersToSend = users.map(async (user) => {
+                const userToSend = await UsersDAO.getById(user)
+                const {username, picture} = userToSend
+                return {username, picture}
+            })
+            return res.ok(usersToSend)
         }catch(err){
             return res.status(500).send(err)
         }

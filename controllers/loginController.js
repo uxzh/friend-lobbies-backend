@@ -44,6 +44,26 @@ class loginController{
             res.status(500).send(err)
         }
     }
+
+    static async forgotPassword(req, res, next){
+        try{
+            const {email, username, password} = req.body
+            if(!email || !username){
+                return res.status(422).send("Please provide email and username")
+            }
+            const user = await UsersDAO.getByEmail(email)
+            if (user.username !== username){
+                return res.status(401).send("Username and email do not match")
+            }
+            else{
+                const hashedpassword = await bcrypt.hash(password, 10)
+                await UsersDAO.update(user._id, {password: hashedpassword})
+                return res.status(200).send("Password updated")
+            }
+        }catch(err){
+            res.status(500).send(err)
+        }
+    }
 }
 
 module.exports = loginController
