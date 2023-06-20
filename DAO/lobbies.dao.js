@@ -20,15 +20,6 @@ class LobbiesDAO{
         }
     }
 
-    static async getCategories(){
-        try{
-            const categories = await this.lobbies.distinct("category")
-            return categories
-        }catch(err){
-            throw new Error(`Couldn't get categories: ${err}`)
-        }
-    }
-
     static async addLobby(lobby){
         try{
            await this.lobbies.insertOne(lobby)
@@ -95,6 +86,15 @@ class LobbiesDAO{
             return filteredMessages
         }catch(err){
             throw new Error(`Couldn't get messages: ${err}`)
+        }
+    }
+
+    static async search(query){
+        try{
+            const lobbies = await this.lobbies.find(query).toArray()
+            return lobbies
+        }catch(err){
+            throw new Error(`Couldn't search for lobbies: ${err}`)
         }
     }
 
