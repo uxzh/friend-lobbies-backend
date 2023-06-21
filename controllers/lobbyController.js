@@ -216,7 +216,6 @@ class lobbyController{
                 const {username, picture} = userToSend
                 usersToSend.push({username, picture})
             }
-            console.log(usersToSend)
             return res.ok(usersToSend)
         }catch(err){
             return res.status(500).send(err)

@@ -24,8 +24,7 @@ class loginController{
                 const token = await jwt.sign({_id, firstName, lastName, picture, interests, username}, process.env.JWT_SECRET, {expiresIn: "3h"})
                 res.cookie("token", token, {sameSite: 'none', secure: true})
                 return res.ok(token)
-
-            }else if (username){
+            }if(username){
                 const user = await UsersDAO.getByUsername(username)
                 if (!user){
                     return res.status(404).send("User not found")
@@ -34,7 +33,7 @@ class loginController{
                 if (!match){
                     return res.status(401).send("Password incorrect")
                 }
-                const {firstName, lastName, picture, _id, interests, username} = user
+                const {firstName, lastName, picture, _id, interests} = user
                 const token = jwt.sign({_id, firstName, lastName, picture, interests, username}, process.env.JWT_SECRET, {expiresIn: "3h"})
                 res.cookie("token", token, {sameSite: 'none', secure: true})
                 return res.ok(token)
