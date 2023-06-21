@@ -37,7 +37,7 @@ class UsersDAO{
     
     static async getById(id){
         try{
-            const user = await this.users.findOne({id: id})
+            const user = await this.users.findOne({_id: id})
             return user
         }catch(err){
             throw new Error(`Couldn't find user: ${err}`)
