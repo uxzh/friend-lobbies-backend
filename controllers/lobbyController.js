@@ -30,7 +30,7 @@ class lobbyController{
 
     static async addLobby(req, res, next){
         try{
-            const {category, activity, location, date, capacity, name} = req.body
+            const {category, location, date, capacity, name, description} = req.body
             const users = [req.userID]
             const img = await unsplash.photos.getRandom({query: activity})
             const defaultPicture = img.response.urls.regular
@@ -43,7 +43,7 @@ class lobbyController{
                     pictures.push(url)
                 })
             }
-            const add = await LobbiesDAO.addLobby({category, activity, location, date, capacity, users: [req.userID], pictures, defaultPicture, _id, messages:[], admins: [req.userID], waitList: []})
+            const add = await LobbiesDAO.addLobby({category, name, description, location, date, capacity, users: [req.userID], pictures, defaultPicture, _id, messages:[], admins: [req.userID], waitList: []})
             return res.ok("Lobby created")
         }catch(err){
             return res.status(500).send(err)
