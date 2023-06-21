@@ -1,4 +1,5 @@
 const LobbiesDAO = require("../DAO/lobbies.dao")
+const UsersDAO = require("../DAO/users.dao")
 const unsplash = require('../lib/unsplash')
 const { v4: uuidv4 } = require('uuid');
 const categories = require('../lib/categories');
@@ -7,7 +8,7 @@ class lobbyController{
 
     static async getById(req, res, next){
         try{
-            const lobby = LobbiesDAO.getById(req.params.id)
+            const lobby = await LobbiesDAO.getById(req.params.id)
             if(lobby){
                 return res.ok(lobby)
             }else{
@@ -209,11 +210,13 @@ class lobbyController{
         try{
             const lobby = await LobbiesDAO.getById(req.params.id)
             const users = lobby.users
-            const usersToSend = users.map(async (user) => {
+            const usersToSend = []
+            for (const user of users){
                 const userToSend = await UsersDAO.getById(user)
                 const {username, picture} = userToSend
-                return {username, picture}
-            })
+                usersToSend.push({username, picture})
+            }
+            console.log(usersToSend)
             return res.ok(usersToSend)
         }catch(err){
             return res.status(500).send(err)

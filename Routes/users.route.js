@@ -7,7 +7,7 @@ const { multerUpload } = require("../lib/multerUpload");
 const route = express.Router();
 const adminCheck = require("../lib/adminCheck");
 
-route.get('/single', userController.getSingle)
+route.get('/single/:id', userController.getSingle)
 
 route.put('/:id', multerUpload.single('picture'), validateSchema(userUpdateSchema), userController.update)
 

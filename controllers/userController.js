@@ -6,7 +6,7 @@ const { cloudinaryUpload } = require('../lib/cloudinaryUpload')
 class userController{
     static async getSingle(req, res, next){
         try{
-            const user = await UsersDAO.getById(req.userID);
+            const user = await UsersDAO.getById(req.params.id);
             return res.ok(user);
         }catch(err){
             res.status(500).send(err)
