@@ -1,3 +1,4 @@
+const { options } = require("../App")
 const UsersDAO = require("./users.dao")
 
 class LobbiesDAO{
@@ -95,6 +96,33 @@ class LobbiesDAO{
             return lobbies
         }catch(err){
             throw new Error(`Couldn't search for lobbies: ${err}`)
+        }
+    }
+    
+    static async getByInterest(interests){
+        try{
+            const lobbies = await this.lobbies.find({category: {$in: interests}}).toArray()
+            return lobbies
+        }catch(err){
+            throw new Error(`Couldn't get lobbies by interest: ${err}`)
+        }
+    }
+
+    static async getByNotInterest(interests){
+        try{
+            const lobbies = await this.lobbies.find({category: {$nin: interests}}).toArray()
+            return lobbies
+        }catch(err){
+            throw new Error(`Couldn't get lobbies by not interest: ${err}`)
+        }
+    }
+
+    static async getRandom(amount){
+        try{
+            const lobbies = await this.lobbies.find({}, {}, {limit: amount}).toArray()
+            return lobbies
+        }catch(err){
+            throw new Error(`Couldn't get random lobbies: ${err}`)
         }
     }
 

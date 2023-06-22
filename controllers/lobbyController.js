@@ -3,6 +3,8 @@ const UsersDAO = require("../DAO/users.dao")
 const unsplash = require('../lib/unsplash')
 const { v4: uuidv4 } = require('uuid');
 const categories = require('../lib/categories');
+const cloudinaryUpload = require('../lib/cloudinaryUpload')
+const fs = require('fs');
 
 class lobbyController{
 
@@ -33,20 +35,22 @@ class lobbyController{
         try{
             const {category, location, date, capacity, name, description} = req.body
             const users = [req.userID]
-            const img = await unsplash.photos.getRandom({query: activity})
+            const img = await unsplash.photos.getRandom({query: category})
             const defaultPicture = img.response.urls.regular
             const _id = uuidv4()
             let pictures = []
             if (req.files){
-                req.files.forEach(async (file) => {
-                    const url = await cloudinaryUpload(req.file.path);
-                    fs.unlinkSync(req.file.path);
+                for (const file of req.files){
+                    const url = await cloudinaryUpload(file.path);
+                    console.log(url)
+                    fs.unlinkSync(file.path);
                     pictures.push(url)
-                })
+                }
             }
             const add = await LobbiesDAO.addLobby({category, name, description, location, date, capacity, users: [req.userID], pictures, defaultPicture, _id, messages:[], admins: [req.userID], waitList: []})
             return res.ok("Lobby created")
         }catch(err){
+            console.log(err)
             return res.status(500).send(err)
         }
     }
@@ -217,6 +221,46 @@ class lobbyController{
                 usersToSend.push({username, picture})
             }
             return res.ok(usersToSend)
+        }catch(err){
+            return res.status(500).send(err)
+        }
+    }
+
+    static async getInterests(req, res, next){
+        try{
+            const user = await UsersDAO.getById(req.userID)
+            const interests = user.interests
+            const lobbies = await LobbiesDAO.getByInterest(interests)
+            return res.ok(lobbies)
+        }catch(err){
+            return res.status(500).send(err)
+        }
+    }
+
+    static async getNotInterests(req, res, next){
+        try{
+            const user = await UsersDAO.getById(req.userID)
+            const interests = user.interests
+            const lobbies = await LobbiesDAO.getByNotInterest(interests)
+            return res.ok(lobbies)
+        }catch(err){
+            return res.status(500).send(err)
+        }
+    }
+
+    static async getRandom(req, res, next){
+        try{
+            const lobbies = await LobbiesDAO.getRandom(20)
+            return res.ok(lobbies)
+        }catch(err){
+            return res.status(500).send(err)
+        }
+    }
+
+    static async getAll(req, res, next){
+        try{
+            const lobbies = await LobbiesDAO.search()
+            return res.ok(lobbies)
         }catch(err){
             return res.status(500).send(err)
         }
