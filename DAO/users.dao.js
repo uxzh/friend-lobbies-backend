@@ -55,7 +55,7 @@ class UsersDAO{
 
     static async update(id, params){
         try{
-            const update = await this.users.updateOne({id: user.id}, {$set: params})
+            const update = await this.users.updateOne({_id: id}, {$set: params})
         }catch(err){
             throw new Error(`Couldn't update user: ${err}`)
         }

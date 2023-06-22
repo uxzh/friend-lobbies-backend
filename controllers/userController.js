@@ -7,7 +7,8 @@ class userController{
     static async getSingle(req, res, next){
         try{
             const user = await UsersDAO.getById(req.params.id);
-            return res.ok(user);
+            const {password, ...data} = user;
+            return res.ok({...data});
         }catch(err){
             res.status(500).send(err)
         }
@@ -31,6 +32,7 @@ class userController{
             await UsersDAO.update(req.userID, update);
             return res.ok("User updated")
         }catch(err){
+            console.log(err)
             res.status(500).send(err)
         }
     }
@@ -117,9 +119,11 @@ class userController{
     static async addInvite(req, res, next){
         try{
             const user = await UsersDAO.getById(req.params.id);
+            const sender = await UsersDAO.getById(req.userID);
+            const picture = sender.picture;
             const invites = user.invites;
             const _id = uuidv4();
-            invites.push({...req.body, _id});
+            invites.push({...req.body, _id, picture});
             await UsersDAO.update(req.params.id, {invites});
             return res.ok("Added invite")
         }catch(err){

@@ -20,8 +20,8 @@ class loginController{
                 if (!match){
                     return res.status(401).send("Password incorrect")
                 }
-                const {firstName, lastName, picture, _id, interests, username} = user
-                const token = await jwt.sign({_id, firstName, lastName, picture, interests, username, email}, process.env.JWT_SECRET, {expiresIn: "3h"})
+                const {firstName, lastName, picture, _id, interests, username, friends, savedLobbies, mutes, invites, phone} = user
+                const token = jwt.sign({_id, firstName, lastName, picture, interests, username, email, friends, savedLobbies, mutes, invites, phone}, process.env.JWT_SECRET, {expiresIn: "3h"})
                 res.cookie("token", token, {sameSite: 'none', secure: true})
                 return res.ok(token)
             }if(username){
@@ -33,8 +33,8 @@ class loginController{
                 if (!match){
                     return res.status(401).send("Password incorrect")
                 }
-                const {firstName, lastName, picture, _id, interests, email} = user
-                const token = jwt.sign({_id, firstName, lastName, picture, interests, username, email}, process.env.JWT_SECRET, {expiresIn: "3h"})
+                const {firstName, lastName, picture, _id, interests, email, friends, savedLobbies, mutes, invites, phone} = user
+                const token = jwt.sign({_id, firstName, lastName, picture, interests, username, email, friends, savedLobbies, mutes, invites, phone}, process.env.JWT_SECRET, {expiresIn: "3h"})
                 res.cookie("token", token, {sameSite: 'none', secure: true})
                 return res.ok(token)
             }
