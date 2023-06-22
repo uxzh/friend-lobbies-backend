@@ -1,7 +1,9 @@
 const UsersDAO = require('../DAO/users.dao')
 const LobbiesDAO = require('../DAO/lobbies.dao')
 const { v4: uuidv4 } = require('uuid');
-const { cloudinaryUpload } = require('../lib/cloudinaryUpload')
+const cloudinaryUpload = require('../lib/cloudinaryUpload')
+const fs = require('fs');
+const jwt = require('jsonwebtoken')
 
 class userController{
     static async getSingle(req, res, next){
@@ -20,6 +22,13 @@ class userController{
             if(req.file){
                 const picture = await cloudinaryUpload(req.file.path);
                 fs.unlinkSync(req.file.path);
+                update.picture = picture;
+                await UsersDAO.update(req.userID, update);
+                const newUser = await UsersDAO.getById(req.userID);
+                const { password, ...body} = newUser;
+                const token = jwt.sign({...body}, process.env.JWT_SECRET, {expiresIn: "3h"})
+                res.cookie("token", token, {sameSite: 'none', secure: true})
+                return res.ok("User updated")
             }
             if(req.body.password){
                 if(req.body.password != req.body.passwordConfirm){
@@ -28,6 +37,8 @@ class userController{
                 const hashedpassword = await bcrypt.hash(req.body.password, 10)
                 update.password = hashedpassword
                 delete update.passwordConfirm
+                await UsersDAO.update(req.userID, update);
+                return res.ok("User updated")
             }
             await UsersDAO.update(req.userID, update);
             return res.ok("User updated")

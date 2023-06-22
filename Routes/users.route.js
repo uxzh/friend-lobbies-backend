@@ -9,7 +9,11 @@ const adminCheck = require("../lib/adminCheck");
 
 route.get('/single/:id', userController.getSingle)
 
+<<<<<<< HEAD
+route.put('/user', multerUpload.single('picture'), validateSchema(userUpdateSchema), userController.update)
+=======
 route.put('/', multerUpload.single('picture'), validateSchema(userUpdateSchema), userController.update)
+>>>>>>> 9a4ae5cfaf15dc3109d787fd0b07dbb28d19a8d3
 
 route.get('/username/:username', userController.getByUsername)
 

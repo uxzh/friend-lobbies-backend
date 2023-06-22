@@ -11,11 +11,7 @@ route.get('/lobby/:id', lobbyController.getById)
 
 route.get('/categories', lobbyController.getCategories)
 
-<<<<<<< HEAD
 route.post('/lobby', multerUpload.array('pictures', 5), validateSchema(lobbySchema), lobbyController.addLobby)
-=======
-route.post('/', multerUpload.array('pictures', 5), validateSchema(lobbySchema), lobbyController.addLobby)
->>>>>>> 450eaabe1eae09718834b0056a42d0291dfa0977
 
 route.put('/:id', multerUpload.array('pictures', 5), validateSchema(editLobbySchema), lobbyController.editLobby)
 
